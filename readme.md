@@ -1,10 +1,10 @@
-![Alt text](src/img/logo.png?raw=true "Title")
+![Alt text](src/img/logo_back.png?raw=true "Title")
 
  #### The song recommender
 
 ## Opening your ears to a wide world of music
 
-Tired of listening always to the same music?*
+*Tired of listening always to the same music?*
 
 **TRY Wide!**
 
