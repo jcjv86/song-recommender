@@ -21,3 +21,13 @@ With Wide you can choose the amount of recommendations you want. You can have on
 
 4. **Features layout**<br>
 We know that is important to understand what features you love of your music. Thats why we integrate a plot to show you what are the things  you love.
+
+#
+
+### Updates
+
+- Added extra databases with bigger number of songs and more diverse styles (original had 5k, newest has 37k)
+- Included script to fetch song ID and features that runs remotely in a Raspberry Pi via SSH (src/lib/spotify_raspberrypi_remote.py).
+- Spotify API credentials can be provided on config script (src/lib/config.py).
+- Clustering now considers tempo as a weight so recommendations have a similar tempo.
+- Work in progress - multipage streamlit app.
