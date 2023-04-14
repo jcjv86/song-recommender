@@ -3,13 +3,13 @@ import sys
 import os
 import warnings
 warnings.simplefilter('ignore')
-sys.path.insert(1, '/home/juan/Documents/')
+sys.path.insert(1, '../src/lib')
 import time
 import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-from credentials import *
+from config import *
 import spotipy
 import json
 from spotipy.oauth2 import SpotifyClientCredentials
