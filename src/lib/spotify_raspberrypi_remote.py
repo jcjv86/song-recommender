@@ -18,11 +18,7 @@ ssh hostname "python3 spotify_raspberrypi_remote.py&"
 
 import numpy as np; import pandas as pd; import spotipy; import json; from spotipy.oauth2 import SpotifyClientCredentials; import time; import os; import logging; import sys
 sys.path.append('./')
-from config import client_id as client_id
-from config import client_secret as client_secret
-from config import exported_files as exported_files
-from config import log_file as log_file
-from config import timer as timer
+from config import *
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id, client_secret))
 

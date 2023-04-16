@@ -15,7 +15,7 @@ from math import pi
 sys.path.append('./config/')
 from config import *
 import streamlit as st
-st.set_page_config(page_title='WIDE - The Song Recommender', page_icon=':headphones:', layout="wide", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title='WIDE - Song Features Search', page_icon=':bar_chart:', layout="wide", initial_sidebar_state="auto", menu_items=None)
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id,
                                                            client_secret= client_secret))
@@ -40,33 +40,59 @@ def search_song(title, artist):
 
 
 def user_select(results):
+    #st.write(results)
     base_url = 'https://open.spotify.com/track/'
     counter = 1
     index = 0
     songs = []
+    counter_lst = ['1','2','3','4','5']
+    artists_lst = []
+    artists_id = []
+    album_lst = []
+    title_lst = []
+    link_lst = []
+    selection_lst = []
+    pics_lst = []
     for i in range(1, len(results['tracks']['items'])+1):
-        st.write(counter, 'Song name: ',results['tracks']['items'][index]['name'])
-        st.write('Artist name: ',results['tracks']['items'][index]['artists'][0]['name'])
-        st.write('url: ',base_url+results['tracks']['items'][index]['id'])
-        st.subheader('')
+        title_lst.append(results['tracks']['items'][index]['name'])
+        album_lst.append(results['tracks']['items'][index]['album']['name'])
+        artists_lst.append(results['tracks']['items'][index]['artists'][0]['name'])
+        artists_id.append(results['tracks']['items'][index]['artists'][0]['id'])
+        link_lst.append(base_url+results['tracks']['items'][index]['id'])
         songs.append(results['tracks']['items'][index]['id'])
+        selection = str(counter)+' - '+title_lst[index]+' - '+album_lst[index]+' by '+artists_lst[index]
+        selection_lst.append(selection)
+        pics_lst.append(results['tracks']['items'][index]['album']['images'][1]['url'])
         counter += 1
         index += 1
 
-    user_selection = st.selectbox('Please select a song', ('1','2','3','4','5'))
-    if user_selection == '1':
+    user_select_df = pd.DataFrame(counter_lst)
+    user_select_df.rename(columns={0: 'No.'}, inplace=True)
+    user_select_df['Song Title'] = title_lst
+    user_select_df['Album'] = album_lst
+    user_select_df['Artist'] = artists_lst
+    user_select_df['URL'] = link_lst
+    user_select_df['URL'] = user_select_df['URL'].apply(make_clickable)
+    st.write(HTML(user_select_df.to_html(index=False,escape=False)))
+
+    user_selection = st.radio('Please select a song from the below options (song - album - artist)', (selection_lst[0], selection_lst[1], selection_lst[2], selection_lst[3], selection_lst[4]))
+    if user_selection == selection_lst[0]:
+        st.image(pics_lst[0], width=300)
         return songs[0]
-    elif user_selection == '2':
+    elif user_selection == selection_lst[1]:
+        st.image(pics_lst[1], width=300)
         return songs[1]
-    elif user_selection == '3':
+    elif user_selection == selection_lst[2]:
+        st.image(pics_lst[2], width=300)
         return songs[2]
-    elif user_selection == '4':
+    elif user_selection == selection_lst[3]:
+        st.image(pics_lst[3], width=300)
         return songs[3]
-    elif user_selection == '5':
+    elif user_selection == selection_lst[4]:
+        st.image(pics_lst[4], width=300)
         return songs[4]
     else:
         st.write('Please select one song')
-
 
 def get_audio_features(song_id):
     los=[]
@@ -218,6 +244,7 @@ artist = artist_input_container.text_input("Please enter artist name: ")
 if artist != "":
     artist_input_container.empty()
     st.info(artist)
+
 
 if title and artist:
     title = title.title()

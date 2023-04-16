@@ -23,19 +23,17 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id,
                                                            client_secret= client_secret))
 
 def search_song(title, artist):
-    print()
-    
     try:
         results = sp.search(q=title+','+artist, limit=5)
     except: 
-        return 'na'
+        return 'Nothing found, please check your credentials'
     while len(results['tracks']['items'])<5:
         title = str(input('Sorry not found. Please enter song title again: \n\n')).lower()
         artist = str(input('\nPlease enter artist name: \n\n')).lower()
         try:
             results = sp.search(q=title+','+artist, limit=5)
         except: 
-            return 'na'
+            return 'Error, try again'
     return results
     
 
