@@ -155,8 +155,8 @@ if title and artist:
     ra_album_name = []
     index=0
     for i in range(1, len(related_artists_id)+1):
-        choice = random.randint(0,9)
         songs_search = sp.artist_top_tracks(related_artists_id[index])
+        choice = random.randint(0,len(songs_search)-1)
         ra_song_id.append(songs_search['tracks'][choice]['id'])
         ra_song_name.append(songs_search['tracks'][choice]['name'])
         ra_song_url.append(songs_search['tracks'][choice]['external_urls']['spotify'])
