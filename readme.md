@@ -19,13 +19,13 @@ We provide a direct link of the recommendations so you can listen right away to 
 3. **Choose the number of recommendations**<br>
 With WIDE you can choose the number of recommendations you want. You can have one track or an entire list.
 
-4. **Features layout** (UNDER DEVELOPMENT)<br>
+4. **Features layout**<br>
 We know that is important to understand what features you love of your music. That's why we integrate a plot to show you what are the things you love.
 
-5. **Save your songs into a new or already existing Spotify playlist** (UNDER DEVELOPMENT)<br>
+5. **Save your songs into an existing Spotify playlist**<br>
 Don't lose any second and listen to your songs straight away!
 
-### WIDE can run on the song recommender jupyter notebook or on the multipage streamlit app (this last one includes new features like recommendations based on related artists).
+### WIDE can run on the song recommender jupyter notebook or on the multipage streamlit app (this last one includes new features like recommendations based on related artists and export the recommendations into a playlist).
 
 #### Updates
 
