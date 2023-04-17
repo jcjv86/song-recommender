@@ -2,4 +2,5 @@
 base="dark"
 primaryColor="#4242a2"
 secondaryBackgroundColor="#903994"
-
+[deprecation]
+showPyplotGlobalUse = false

@@ -12,16 +12,24 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from IPython.display import HTML
 import matplotlib.pyplot as plt
 from math import pi
+import time
 sys.path.append('./config/')
 from config import *
 import streamlit as st
 import webbrowser
+import random
 st.set_page_config(page_title='WIDE - Related Artist Search', page_icon=':singer:', layout="wide", initial_sidebar_state="auto", menu_items=None)
 
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id,
-                                                           client_secret= client_secret))
+from spotipy.oauth2 import SpotifyOAuth
+
+
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id,
+                                               client_secret,
+                                               redirect_uri='https://localhost:8080',
+                                               scope="user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private"))
+
+
 st.image('../src/img/logo.png', width=650)
-st.divider()
 
 def make_clickable(link):
     return '<a href="{0}">{0}</a>'.format(link)
@@ -75,6 +83,7 @@ def user_select(results):
     user_select_df['URL'] = link_lst
     user_select_df['URL'] = user_select_df['URL'].apply(make_clickable)
     st.write(HTML(user_select_df.to_html(index=False,escape=False)))
+    st.subheader('')
 
     user_selection = st.radio('Please select one from the below options (song - album - artist)', (selection_lst[0], selection_lst[1], selection_lst[2], selection_lst[3], selection_lst[4]))
     if user_selection == selection_lst[0]:
@@ -95,6 +104,7 @@ def user_select(results):
     else:
         st.write('Please select one song')
 
+st.divider()
 
 title_input_container = st.empty()
 title = title_input_container.text_input("Please enter song name: ")
@@ -113,40 +123,58 @@ if artist != "":
 if title and artist:
     title = title.title()
     artist = artist.title()
-    st.write('Your seach:', title, 'by', artist)
+    st.write(':violet[Your search:]', title, ':violet[by]', artist)
     st.divider()
-    st.write('Search results:')
+    st.title(':violet[Search results:]')
     title = title.lower()
     artist = artist.lower()
     results = search_song(title, artist)
     artist_id = user_select(results)
+    st.divider()
+
+    #Related artists search
     related_artists_id = []
     related_artists_name = []
     related_artists_pic = []
     related_artists_url = []
-    songs = []
+    songs_search = []
     index = 0
     related = sp.artist_related_artists(artist_id)
-    #st.write(related)
     for i in range(1, len(related['artists'])+1):
                        related_artists_id.append(related['artists'][index]['id'])
                        related_artists_url.append(related['artists'][index]['external_urls']['spotify'])
                        related_artists_name.append(related['artists'][index]['name'])
                        related_artists_pic.append(related['artists'][index]['images'][2]['url'])
                        index += 1
-    #st.write(related_artists_id)
-    #st.write(related_artists_name)
-    #songs = sp.artist_top_tracks(related_ids[0])
 
-    #related_artists_df
-    #st.write(songs)
-    #st.write(songs['tracks'][0]['external_urls']['spotify'])
-    st.divider()
+    #Related artists songs search
+    ra_song_id = []
+    ra_song_name = []
+    ra_song_url = []
+    ra_artist_name = []
+    ra_album_name = []
+    index=0
+    for i in range(1, len(related_artists_id)+1):
+        choice = random.randint(0,9)
+        songs_search = sp.artist_top_tracks(related_artists_id[index])
+        ra_song_id.append(songs_search['tracks'][choice]['id'])
+        ra_song_name.append(songs_search['tracks'][choice]['name'])
+        ra_song_url.append(songs_search['tracks'][choice]['external_urls']['spotify'])
+        ra_album_name.append(songs_search['tracks'][choice]['album']['name'])
+        ra_artist_name.append(songs_search['tracks'][choice]['artists'][0]['name'])
+        index += 1
 
-    st.header(':violet[**Related artists:**]')
+    #Related artists Song URI search (pure track URI needed, previous search only provides artists track URI)
+    ra_song_uri = []
+    index=0
+    for i in range(1, len(ra_song_id)+1):
+        ra_tracks = sp.track(track_id = ra_song_id[index])
+        ra_song_uri.append(ra_tracks['uri'])
+        index += 1
 
-    st.divider()
-
+    st.title(':violet[**Related artists**]')
+    st.caption('Click on their name to be redirected to their Spotify profile.')
+    st.title('')
 
     col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -282,7 +310,50 @@ if title and artist:
         if button20:
             webbrowser.open(related_artists_url[19])
 
-st.divider()
+    st.divider()
 
-with st.expander('Our inspiration - searched this song in all the numerous tests. Thanks Iggy'):
+    st.title(":violet[Here's your playlist!]")
+    st.caption('One random song picked from each one of the related artists - 20 songs in total')
+    st.title('')
+    button_playlist = st.button('Click to add tracks to playlist and open in browser - see selected songs below :headphones:')
+    if button_playlist:
+        playlist_items_search = sp.playlist_items(playlist_id)
+        playlist_items = []
+        index=0
+        for i in range(1, len(playlist_items_search['items'])+1):
+            playlist_items.append(playlist_items_search['items'][index]['track']['id'])
+            index += 1
+        sp.playlist_remove_all_occurrences_of_items(playlist_id, playlist_items)
+        sp.playlist_add_items(playlist_id, items=ra_song_url)
+        webbrowser.open(playlist_url)
+
+    st.title('')
+
+    song_number = [i for i in range(1,21)]
+    recommended_songs_df = pd.DataFrame(song_number)
+    recommended_songs_df.rename(columns={0:'No.'}, inplace=True)
+    recommended_songs_df['Song Title'] = ra_song_name
+    recommended_songs_df['Album'] = ra_album_name
+    recommended_songs_df['Artist'] = ra_artist_name
+    recommended_songs_df['URL'] = ra_song_url
+    recommended_songs_df['URL'] = recommended_songs_df['URL'].apply(make_clickable)
+    st.write(HTML(recommended_songs_df.to_html(index=False,escape=False)))
+
+
+    #Add to queue button - needs further work
+
+    #button_queue = st.button('Click to add tracks to queue and play')
+    #if button_queue:
+        #webbrowser.open('https://open.spotify.com/')
+        #time.sleep(2)
+        #device_search = sp.devices()
+        #st.write(device_search)
+        #device = device_search['devices'][0]['id']
+        #time.sleep(2)
+        #sp.start_playback(device, context_uri='playlist', offset={'uri':ra_song_uri[0]}, uris=ra_song_uri)
+
+st.title('')
+st.title('')
+st.title('')
+with st.expander('Our inspiration - searched this song in all the numerous tests. Thanks Iggy! \n\n:crocodile:'):
     st.video('https://www.youtube.com/watch?v=jQvUBf5l7Vw')

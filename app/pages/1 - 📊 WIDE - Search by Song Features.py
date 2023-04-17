@@ -74,6 +74,7 @@ def user_select(results):
     user_select_df['URL'] = link_lst
     user_select_df['URL'] = user_select_df['URL'].apply(make_clickable)
     st.write(HTML(user_select_df.to_html(index=False,escape=False)))
+    st.subheader('')
 
     user_selection = st.radio('Please select a song from the below options (song - album - artist)', (selection_lst[0], selection_lst[1], selection_lst[2], selection_lst[3], selection_lst[4]))
     if user_selection == selection_lst[0]:
@@ -150,45 +151,47 @@ def selector(final_scaled, database, song_id, final, df2, selection, title, arti
 
     song_recomender_test = song_recomender_test.drop(['id'], axis=1)
     song_recomender_test.rename(columns={'title':'Song Title', 'artist':'Artist Name', 'url':'URL'}, inplace=True)
-
-    st.write()
     st.write('Displaying', selection, 'similar song(s) to your selection: \n')
     st.write(HTML(song_recomender_test.to_html(index=False,escape=False)))
-    st.write('\n\n')
+
 
     #Graph
-    df2 = df2[['danceability', 'energy', 'speechiness', 'acousticness',
-               'instrumentalness', 'liveness', 'valence']]
+    st.divider()
+    st.title(':violet[Song Features visualization]')
+    with st.container():
+        df2 = df2[['danceability','energy', 'speechiness', 'acousticness', 'instrumentalness', 'liveness',
+        'valence']]
 
-    categories=list(df2)[0:]
-    N = len(categories)
+        categories=list(df2)[0:]
+        N = len(categories)
 
-    values = df2.loc[0].values.flatten().tolist()
-    values += values[:1]
-
-    angles = [n / float(N) * 2 * pi for n in range(N)]
-    angles += angles[:1]
-
-    ax = plt.subplot(111, polar=True)
-
-    plt.xticks(angles[:-1], categories, color='grey', size=8)
-
-    ax.set_rlabel_position(0)
-    plt.yticks([0.20,0.40,0.60,0.8], ['0.20','0.40','0.60','0.8'], color="grey", size=8)
-    plt.ylim(0,1)
-
-    # Plot data
-    ax.plot(angles, values, linewidth=1, linestyle='solid', color = 'm')
-
-    # Fill area
-    ax.fill(angles, values, 'm', alpha=0.1)
-
-    # Show the graph
-    st.write('These are the features of the song you selected:\n', title, 'by', artist)
-    plt.tight_layout()
-    plt.show()
+        values = df2.loc[0].values.flatten().tolist()
+        values += values[:1]
+        angles = [n / float(N) * 2 * pi for n in range(N)]
+        angles += angles[:1]
 
 
+        ax = plt.subplot(111, projection='polar')
+
+        plt.rcParams['figure.facecolor'] = 'black'
+        plt.xticks(angles[:-1], categories, color='grey', size=8)
+
+
+        ax.set_rlabel_position(0)
+        plt.yticks([0.20,0.40,0.60,0.8], ['0.20','0.40','0.60','0.8'], color="grey", size=7)
+        plt.ylim(0,1)
+
+        # Plot data
+        ax.plot(angles, values, linewidth=1, linestyle='solid', color = 'm')
+
+        # Fill area
+        ax.fill(angles, values, 'm', alpha=0.1)
+
+        # Show the graph
+        print('These are the features of the song you like!\n')
+        plt.tight_layout()
+        plt.show()
+        st.pyplot(use_container_width=False)
 
 def song_recommender(df, title, artist):
     #Get song id
@@ -214,6 +217,7 @@ def song_recommender(df, title, artist):
     final = clustering(df_scaled, tempo_weight)
 
     final_scaled = df_scaled.iloc[0:-1]
+    st.divider()
     try:
         selection = st.slider('\nHow many songs do you want us to recommend you? Maximum 20!\n', min_value=1, max_value=20, value=5)
     except:
@@ -222,14 +226,15 @@ def song_recommender(df, title, artist):
     title = title.title()
     artist = artist.title()
     selector(final_scaled, database, song_id, final, df2, selection, title, artist)
-    st.write('\n\nFeatures explained (measured on a scale from 0 to 1):\n')
-    st.write('-Energy: represents how intense and active the song is.')
-    st.write('-Danceability: describes how suitable a track is for dancing.')
-    st.write('-Valence: a measure describing the musical positiveness. The higher, the more cheerful.')
-    st.write('-Liveness: detects if the track was recorded live.')
-    st.write('-Instrumentalness: track contains no vocals.')
-    st.write('-Acousticness: possibility of the track being acoustic.')
-    st.write('-Speechiness: Speechiness detects the presence of spoken words in a track.')
+    st.subheader(':violet[Features explanation]')
+    st.caption('Scale: from 0 to 1')
+    st.write(':violet[Energy:] Represents how intense and active the song is.')
+    st.write(':violet[Danceability:] Describes how suitable a track is for dancing.')
+    st.write(':violet[Valence:] Measures the musical positiveness. The higher, the more cheerful.')
+    st.write(':violet[Liveness:] Detects if the track was recorded live.')
+    st.write(':violet[Instrumentalness:] Indicates if the rack contains no vocals.')
+    st.write(':violet[Acousticness:] Shows the possibility of the track being acoustic.')
+    st.write(':violet[Speechiness:] Detects the presence of spoken words in a track.')
 
 title_input_container = st.empty()
 title = title_input_container.text_input("Please enter song name: ")
@@ -249,8 +254,9 @@ if artist != "":
 if title and artist:
     title = title.title()
     artist = artist.title()
-    st.write('Your seach:', title, 'by', artist)
-    st.write('Search results:')
+    st.write(':violet[Your seach:]', title, ':violet[by]', artist)
+    st.divider()
+    st.title(':violet[Search results:]')
     title = title.lower()
     artist = artist.lower()
     song_recommender(df, title, artist)
