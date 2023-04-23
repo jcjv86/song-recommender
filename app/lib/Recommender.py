@@ -7,13 +7,14 @@ from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSiz
 import webbrowser
 import random
 import sys
-from IPython.display import HTML
 sys.path.append('../config/')
 import spotipy
 import spotipy as sp
 from config import client_id
 from config import client_secret
 from config import playlist_id
+from config import timer
+
 from spotipy.oauth2 import SpotifyOAuth
 
 
@@ -22,20 +23,16 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id,
                                                redirect_uri='https://localhost:8080',
                                                scope="user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private"))
 
-
 class Recommender():
     def __init__(self):
         
-        '''
-        self.results = results
-        self.user_selection = user_selection
-        self.artist_id = artist_id
-        self.ra_song_uri = ra_song_uri
-        '''
-
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.playlist_id = playlist_id
+        self.timer = timer
 
     #  ||||    First API call - 1 search    ||||
-
+    # Makes a song title - song artist search, limit 5 songs.
     def search_song(self, title, artist):
         title = title.lower()
         artist = artist.lower()
@@ -45,12 +42,8 @@ class Recommender():
             return 'na'
         return results
 
+    # Allows user to select the song among the 5 results with an streamlit AG Grid. Displays also the album art for easier recognition.
     def user_select(self, results):
-        '''
-        Extracts the initial search info and builds a dataframe with 
-        Title, Artist, Album and Year to allow user to select song.
-        '''
-        #st.write(results)
         base_url = 'https://open.spotify.com/track/'
         counter = 1
         index = 0
@@ -76,7 +69,7 @@ class Recommender():
             counter += 1
             index += 1
 
-        #Artist Selection Dataframe AG Grid
+        # Artist Selection Dataframe AG Grid
         data = {
         'Title': [i for i in title_lst],
         'Album': [i for i in album_lst],
@@ -88,14 +81,14 @@ class Recommender():
         }
         df = pd.DataFrame(data)
 
-        # select visible columns
+        # select visible columns for the user
         gb = GridOptionsBuilder.from_dataframe(df[["Title", "Album", "Artist", 'Album Release Year']])
         # configure selection
         gb.configure_selection(selection_mode="single", use_checkbox=True,
                                suppressRowDeselection=True)
         gb.configure_default_column(resizable=False, filterable=False)
         gridOptions = gb.build()
-
+        # build the dinamic dataframe
         data = AgGrid(df,
               gridOptions=gridOptions,
               fit_columns_on_grid_load=True,
@@ -103,7 +96,7 @@ class Recommender():
               update_mode=GridUpdateMode.SELECTION_CHANGED,
               theme='streamlit',
               columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS)
-        
+        # What to do with selected dataframe rows
         selected_rows = data["selected_rows"]
         if len(selected_rows) != 0:
             st.image(selected_rows[0]['pics_lst'])
@@ -113,7 +106,7 @@ class Recommender():
 
 
     # ||||    Second API call    ||||
-
+    # Related artists search
     def related_artists(self, artist_id):
         related_artists_id = []
         related_artists_name = []
@@ -134,6 +127,8 @@ class Recommender():
 
         return related_artists_name, related_artists_url, related_artists_pic, related_artists_id
 
+
+    # The following monster is the column generator for the display of the related artists. Shows related artists in multiples of 5. If the number is lower than 5, will display 4, 3, 2, 1 or inform that there aren't any related artists. I could have added the remainders, but the code would be even bigger and it felt a bit redundant/unnecessary.
     def related_artists_display(self, related_artists_name, related_artists_url, related_artists_pic):
         x = len(related_artists_name)
         index = 0
@@ -309,8 +304,8 @@ class Recommender():
                 counter -= 1
 
 
-    # ////    Fourth API call: CAUTION! Up to 20 Searches. 3 sec timer between calls    ////
-
+    # ////    Fourth API call: CAUTION! Up to 20 calls. Timer between each call    ////
+    # Related artists song search: takes each related artist ID and looks for a random song among the top tracks.
     def related_artists_songs(self, related_artists_id):
         ra_song_id = []
         ra_song_name = []
@@ -321,20 +316,21 @@ class Recommender():
         index=0
         for i in range(1, len(related_artists_id)+1):
             songs_search = sp.artist_top_tracks(related_artists_id[index])
-            choice = random.randint(0,len(songs_search)-1)
+            choice = random.randint(0,len(songs_search['tracks'])-1)
             ra_song_id.append(songs_search['tracks'][choice]['id'])
             ra_song_name.append(songs_search['tracks'][choice]['name'])
             ra_song_url.append(songs_search['tracks'][choice]['external_urls']['spotify'])
             ra_album_name.append(songs_search['tracks'][choice]['album']['name'])
             ra_artist_name.append(songs_search['tracks'][choice]['artists'][0]['name'])
             ra_song_uri.append(songs_search['tracks'][choice]['uri'])
-            time.sleep(3)
+            time.sleep(timer)
             index += 1
         return ra_song_name, ra_artist_name, ra_album_name, ra_song_url, ra_song_uri
 
         
-
-    def button_playlist(self, ra_song_uri, playlist_id):
+    # ////    Fifth API call: playlist items    ////
+    # Playlist generator for the related artists songs. Since spotipy cannot empty the whole list without having the song IDs of the playlist, first we have to get this info from the playlist itself, then remove them and finally add all new songs. Makes the final 2 calls (Timer between them).
+    def playlist_generator(self, ra_song_uri, playlist_id):
         #playlist_id imported from config file.
         playlist_url = 'https://open.spotify.com/playlist/' + playlist_id
         playlist_items_search = sp.playlist_items(playlist_id)
@@ -343,7 +339,7 @@ class Recommender():
         for i in range(1, len(playlist_items_search['items'])+1):
             playlist_items.append(playlist_items_search['items'][index]['track']['id'])
             index += 1
-            time.sleep(3)
         sp.playlist_remove_all_occurrences_of_items(playlist_id, playlist_items)
+        time.sleep(timer)
         sp.playlist_add_items(playlist_id, items=ra_song_uri)
         webbrowser.open(playlist_url)
