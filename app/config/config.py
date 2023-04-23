@@ -1,13 +1,12 @@
 # Feel free to configure this file to your needs.
-# All variables have default values except for Spotify Credentials and source database.
+# All variables have default values except for Spotify Credentials, playlist ID and source database.
 # Please make sure to provide these values or the script won't work.
 
-# Set user_id, client_id and client_secret, and playlist_id and url for the recommendations playlist generation:
+# Set user_id, client_id, client_secret, and playlist_id for the recommendations playlist generation:
 user_id = ''
 client_id = ''
 client_secret = ''
 playlist_id = ''
-playlist_url = ''
 
 # Exported files absolute path (final files destination folder, will be deleted if it already exists and then created, by default in script folder).
 exported_files = './exported_files'
