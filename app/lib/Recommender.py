@@ -342,4 +342,4 @@ class Recommender():
         sp.playlist_remove_all_occurrences_of_items(playlist_id, playlist_items)
         time.sleep(timer)
         sp.playlist_add_items(playlist_id, items=ra_song_uri)
-        webbrowser.open(playlist_url)
+        return(playlist_url)

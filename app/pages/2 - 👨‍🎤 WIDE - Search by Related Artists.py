@@ -74,7 +74,9 @@ if title and artist:
                             st.title('')
                             st.divider()
                             st.title('')
-                            wide.playlist_generator(ra_song_uri, playlist_id)
+                            playlist_url=wide.playlist_generator(ra_song_uri, playlist_id)
                         st.success('Done! Enjoy your new music 🎶')
+                        time.sleep(4)
+                        webbrowser.open(playlist_url)
                 else:
                     st.write('Sorry, no related artists found')
