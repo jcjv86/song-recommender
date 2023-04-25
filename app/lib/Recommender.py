@@ -14,10 +14,8 @@ from config import client_id
 from config import client_secret
 from config import playlist_id
 from config import timer
-
+#Timer can be configured in the config.py file
 from spotipy.oauth2 import SpotifyOAuth
-
-
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id,
                                                client_secret,
                                                redirect_uri='https://localhost:8080',
@@ -329,7 +327,7 @@ class Recommender():
 
         
     # ////    Fifth API call: playlist items    ////
-    # Playlist generator for the related artists songs. Since spotipy cannot empty the whole list without having the song IDs of the playlist, first we have to get this info from the playlist itself, then remove them and finally add all new songs. Makes the final 2 calls (Timer between them).
+    # Playlist generator for the related artists songs. Since spotipy cannot empty the whole list without having the song IDs of the playlist, first we have to get this info from the playlist itself, then remove them and finally add all new songs. Makes the final call (Timer between them).
     def playlist_generator(self, ra_song_uri, playlist_id):
         #playlist_id imported from config file.
         playlist_url = 'https://open.spotify.com/playlist/' + playlist_id

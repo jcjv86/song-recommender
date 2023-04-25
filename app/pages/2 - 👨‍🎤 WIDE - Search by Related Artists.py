@@ -29,6 +29,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id,
 
 
 st.image('../src/img/logo.png', width=650)
+st.title('')
+st.caption(':violet[*Take a walk on the WIDE side*]')
 st.divider()
 
 def make_clickable(link):
@@ -75,7 +77,7 @@ if title and artist:
                             st.divider()
                             st.title('')
                             playlist_url=wide.playlist_generator(ra_song_uri, playlist_id)
-                        st.success('Done! Enjoy your new music 🎶')
+                        st.success('Done! Enjoy your new music! New tab will be opened soon 🎶')
                         time.sleep(4)
                         webbrowser.open(playlist_url)
                 else:
