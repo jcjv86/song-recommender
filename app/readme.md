@@ -53,6 +53,5 @@ After you copied and pasted this URL the app should work (if there is an error m
 ![Alt text](./pics/wide_rltd_01.png?raw=true "Title")
 ![Alt text](./pics/wide_rltd_02.png?raw=true "Title")
 ![Alt text](./pics/wide_rltd_03.png?raw=true "Title")
-![Alt text](./pics/wide_rltd_04.png?raw=true "Title")
 ### Related artists playlist
 ![Alt text](./pics/wide_rltd_playlist.png?raw=true "Title")
