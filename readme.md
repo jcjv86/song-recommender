@@ -37,12 +37,12 @@ Open a terminal and:
 3. Create virtual environment: <br><br> python3 -m venv ./venv<br><br>
 4. Acivate virtual environment: <br><br> source ./venv/bin/activate<br><br>
 5. Install requirements: <br> pip install -r requirements.txt<br><br>
-6. If you want to run the original program from the jupyer notebook, you can find both the original and the extended (which uses the song tempo as a weight to recommend songs with similar tempo) into the /notebooks folder.
+6. If you want to run the original program from the jupyer notebook, you can find both the original and the extended (which uses the song tempo as a weight to recommend songs with similar tempo) into the /notebooks folder.<br><br>
 7. If you want to use the app, move into app folder: <br><br> cd app<br><br>
 8. Configure program settings on app/config/config.py file.<br><br>
 9. Run app: <br><br> streamlit Home.py
 
-
+<br><br>
 #### Updates
 
 - New search option: Related artists! You can click on the names and you will be redirected to the artist profile page in Spotify.
