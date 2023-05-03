@@ -36,8 +36,8 @@ wide = Stats()
 st.title(':violet[Recently played by user]')
 st.title('')
 st.title('')
-number_songs = st.slider('How many recent plays do you want to show?', min_value=1, max_value=1000, value=50)
-st.caption('Search time increases by 2 seconds for every 50 artists block due to Spotify API limitations. Please be patient!')
+number_songs = st.slider('How many recently played tracks do you want to show?', min_value=1, max_value=50, value=50)
+#st.caption('Search time increases by 2 seconds for every 50 songs block due to Spotify API limitations. Please be patient!')
 time.sleep(1)
 
 if number_songs < 51:
@@ -79,6 +79,7 @@ elif (number_songs > 50):
     last_played = []
     song_ids=[]
     recent = (wide.recently_played(50))
+    cursor = recent['cursors']['before']
     recent = recent['items']
     index=0
     for i in range(1, len(recent)+1):
@@ -91,13 +92,14 @@ elif (number_songs > 50):
         index += 1
     time.sleep(2)
     number_songs -= 50
-    x=1
+
     while number_songs > 49 :
         for i in range(2, n+1):
-            recent[x] = (wide.recently_played(50, after=song_ids[-1]))
-            recent[x] = recent[x]['items']
+            recent = wide.recently_played(50, after=cursor)
+            cursor = recent['cursors']['before']
+            recent = recent['items']
             index=0
-            for i in range(1, len(recent[x])+1):
+            for i in range(1, len(recent)+1):
                 artists_names.append(recent[index]['track']['artists'][0]['name'])
                 song_ids.append(recent[index]['track']['id'])
                 songs_titles.append(recent[index]['track']['name'])
@@ -105,21 +107,21 @@ elif (number_songs > 50):
                 albums_release.append(recent[index]['track']['album']['release_date'][0:4])
                 last_played.append(recent[index]['played_at'][0:10] + ' - ' + recent[index]['played_at'][11:19])
                 index += 1
-            x += 1
+
             time.sleep(2)
             number_songs -= 50
     else:
         if rest > 0 :
-            recent_rest = wide.recently_played(rest, after=song_ids[-1])
+            recent_rest = wide.recently_played(rest, after=cursor)
             recent_rest = recent_rest['items']
             index=0
             for i in range(1, len(recent_rest)+1):
-                artists_names.append(recent[index]['track']['artists'][0]['name'])
-                song_ids.append(recent[index]['track']['id'])
-                songs_titles.append(recent[index]['track']['name'])
-                songs_albums.append(recent[index]['track']['album']['name'])
-                albums_release.append(recent[index]['track']['album']['release_date'][0:4])
-                last_played.append(recent[index]['played_at'][0:10] + ' - ' + recent[index]['played_at'][11:19])
+                artists_names.append(recent_rest[index]['track']['artists'][0]['name'])
+                song_ids.append(recent_rest[index]['track']['id'])
+                songs_titles.append(recent_rest[index]['track']['name'])
+                songs_albums.append(recent_rest[index]['track']['album']['name'])
+                albums_release.append(recent_rest[index]['track']['album']['release_date'][0:4])
+                last_played.append(recent_rest[index]['played_at'][0:10] + ' - ' + recent_rest[index]['played_at'][11:19])
                 index += 1
 
     df = {'Song Title': [i for i in songs_titles],
@@ -131,3 +133,6 @@ elif (number_songs > 50):
     data = pd.DataFrame(df)
     st.dataframe(data, use_container_width=True)
 st.write('Displaying last ' +str(len(data)) + ' played song(s).')
+st.title('')
+st.title('')
+st.caption(':red[Note: It appears that there is currently an issue with this method - some songs are not displayed or updated unless user listens to them for at least a specific time, also the cursors are not working properly, blocking the data that can be accessed in the last 50 songs.]\n\n:red[Sorry for the inconvenience!]')
