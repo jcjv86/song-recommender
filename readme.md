@@ -25,6 +25,9 @@ We know that is important to understand what features you love from your music. 
 5. **Save your songs into an existing Spotify playlist**<br>
 Don't lose any second and listen to your songs straight away!
 
+6. **Visualize your user stats**<br>
+Need a Wrap? You can now also check your User Profile Info (name, alias, picture and followers), Followed Artists (app can show you up to 1000).<br> **UNDER DEVELOPMENT: Recently played, Top Artists, Top Tracks**
+
 ### WIDE can run on the song recommender jupyter notebook or on the multipage streamlit app (this last one includes new features like recommendations based on related artists and export the recommendations into a playlist).
 ### You can check the app demo and instructions on the app folder readme file.
 
