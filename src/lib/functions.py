@@ -148,7 +148,7 @@ def selector(final_scaled, database, song_id, final, df2, selection):
     angles += angles[:1]
  
 
-    ax = plt.subplot(111, polar=True)
+    ax = plt.subplot(1, polar=True)
  
 
     plt.xticks(angles[:-1], categories, color='grey', size=8)

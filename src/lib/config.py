@@ -3,8 +3,8 @@
 # Please make sure to provide these values or the script won't work.
 
 # Set client_id and client_secret
-client_id = ''
-client_secret = ''
+client_id = 'b0f789e6f9924186abcf038754d52862'
+client_secret = 'c275dfbb789a4d72905ebaaf561aaa02'
 
 # Exported files absolute path (final files destination folder, will be deleted if it already exists and then created, by default in script folder).
 exported_files = './exported_files'

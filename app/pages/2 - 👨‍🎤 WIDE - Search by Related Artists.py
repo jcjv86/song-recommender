@@ -25,7 +25,7 @@ from spotipy.oauth2 import SpotifyOAuth
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id,
                                                client_secret,
                                                redirect_uri='https://localhost:8080',
-                                               scope="user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private"))
+                                               scope="user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private user-top-read user-follow-read"))
 
 
 st.image('../src/img/logo.png', width=650)
