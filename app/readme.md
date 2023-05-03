@@ -55,3 +55,8 @@ After you copied and pasted this URL the app should work (if there is an error m
 ![Alt text](./pics/wide_rltd_03.png?raw=true "Title")
 ### Related artists playlist
 ![Alt text](./pics/wide_rltd_playlist.png?raw=true "Title")
+### WIDE - User Info
+![Alt text](./pics/wide_user_info.png?raw=true "Title")
+### WIDE - Followed Artists
+![Alt text](./pics/wide_followed_artists_01.png?raw=true "Title")
+![Alt text](./pics/wide_followed_artists_02.png?raw=true "Title")
