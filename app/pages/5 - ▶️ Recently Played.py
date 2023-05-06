@@ -69,6 +69,7 @@ if number_songs < 51:
     data = pd.DataFrame(df)
     st.dataframe(data, use_container_width=True)
 
+#Spotify API has some limitations that set the maximum number of songs recoverable on 50. In case these limitations were lifted, the following code would get the extra info. Just set the max_value in line 39 as desired.
 elif (number_songs > 50):
     n = int(number_songs/50)
     rest = number_songs - n*50
