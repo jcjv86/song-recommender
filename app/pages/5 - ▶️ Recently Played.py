@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import sys
 import matplotlib.pyplot as plt
 import warnings
@@ -18,7 +19,7 @@ import streamlit as st
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode
 import webbrowser
 import random
-st.set_page_config(page_title='WIDE - Related Artist Search', page_icon=':singer:', layout="wide", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title='WIDE - User Recently Played', page_icon=':arrow_right:', layout="wide", initial_sidebar_state="auto", menu_items=None)
 
 from spotipy.oauth2 import SpotifyOAuth
 
@@ -49,6 +50,7 @@ if number_songs < 51:
     albums_release = []
     last_played = []
     song_ids=[]
+    timestamp = []
     index=0
     for i in range(1, len(recent)+1):
         artists_names.append(recent[index]['track']['artists'][0]['name'])
@@ -57,13 +59,15 @@ if number_songs < 51:
         songs_albums.append(recent[index]['track']['album']['name'])
         albums_release.append(recent[index]['track']['album']['release_date'][0:4])
         last_played.append(recent[index]['played_at'][0:10] + ' - ' + recent[index]['played_at'][11:19])
+        timestamp.append(recent[index]['played_at'])
+
         index += 1
 
     df = {'Song Title': [i for i in songs_titles],
           'Artist': [i for i in artists_names],
           'Album': [i for i in songs_albums],
           'Release date': [i for i in albums_release],
-          'Last Played (date - hour)': [i for i in last_played]
+          'Last Played': [i for i in last_played]
         }
 
     data = pd.DataFrame(df)
@@ -129,11 +133,30 @@ elif (number_songs > 50):
           'Artist': [i for i in artists_names],
           'Album': [i for i in songs_albums],
           'Release date': [i for i in albums_release],
-          'Last Played (date - hour)': [i for i in last_played]
-        }
+          'Last Played': [i for i in last_played],
+          }
     data = pd.DataFrame(df)
     st.dataframe(data, use_container_width=True)
+
 st.write('Displaying last ' +str(len(data)) + ' played song(s).')
+
+date=[]
+index = 0
+for i in timestamp:
+    date.append(timestamp[index][0:10])
+    index+=1
+
+
+
+import plotly.express as px
+df = data
+position = [i for i in range(1,len(df)+1)]
+df['Position'] = position
+fig = px.bar(df, x='Position', y='Artist', color="Album", text='Song Title', title=('Last plays'))
+fig.update_layout(height=1000)
+fig.update_traces(textfont_size=10, cliponaxis=False)
+st.plotly_chart(fig, use_container_width=True, height=1000)
+
 st.title('')
 st.title('')
 st.caption(':red[Note: It appears that there is currently an issue with this method - some songs are not displayed or updated unless user listens to them for at least a specific time, also the cursors are not working properly, blocking the data that can be accessed in the last 50 songs.]\n\n:red[Sorry for the inconvenience!]')

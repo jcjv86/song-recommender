@@ -18,7 +18,7 @@ import streamlit as st
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode
 import webbrowser
 import random
-st.set_page_config(page_title='WIDE - Related Artist Search', page_icon=':singer:', layout="wide", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title='WIDE - User info', page_icon=':black_medium_small_square:', layout="wide", initial_sidebar_state="auto", menu_items=None)
 
 from spotipy.oauth2 import SpotifyOAuth
 

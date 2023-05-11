@@ -18,7 +18,7 @@ import streamlit as st
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode
 import webbrowser
 import random
-st.set_page_config(page_title='WIDE - Related Artist Search', page_icon=':singer:', layout="wide", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title='WIDE - User Followed Artists', page_icon=':rocket:', layout="wide", initial_sidebar_state="auto", menu_items=None)
 
 from spotipy.oauth2 import SpotifyOAuth
 
@@ -118,10 +118,12 @@ elif (number_artists > 50):
 st.write('Displaying ' +str(len(data)) + ' artist(s)')
 
 import plotly.express as px
-df = px.data.gapminder()
 
 fig = px.scatter(x=data["Followers"],
-	         size=data["Followers"], color=data["Artist"],
-                 hover_name=data["Artist"], labels={'x': 'Followers', 'y': ''}, title='Artists by number of Followers', log_x=True, size_max=60)
+	         size=data["Followers"], color=data["Artist"], hover_name=data["Artist"],
+	         labels={'x': 'Followers', 'y': 'Position', 'color':'Artist', 'size':'Followers'},
+                 title='Artists by number of Followers', log_x=True, size_max=60)
+fig.update_layout(height=1000)
+fig.update_traces(textfont_size=10, cliponaxis=False)
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, use_container_width=True, height=1000)

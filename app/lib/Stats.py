@@ -39,10 +39,10 @@ class Stats():
         recently_played = sp.current_user_recently_played(limit, after, before)
         return recently_played
 
-    def top_artists(self, limit, offset, time_range):
+    def top_artists(self, limit, offset=0, time_range='medium_term'):
         top_artists = sp.current_user_top_artists(limit, offset, time_range)
         return top_artists
 
-    def top_tracks(self,limit, offset, time_range):
+    def top_tracks(self,limit, offset=0, time_range='medium_term'):
         top_tracks = sp.current_user_top_tracks(limit, offset, time_range)
         return top_tracks
